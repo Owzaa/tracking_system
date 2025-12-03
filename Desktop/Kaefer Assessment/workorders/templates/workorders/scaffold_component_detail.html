@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6">Scaffold Component Detail</h1>
+
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Asset Code: <span class="font-normal">{{ component.asset_code }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Name: <span class="font-normal">{{ component.name }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Category: <span class="font-normal">{{ component.get_category_display }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Length (mm): <span class="font-normal">{% if component.length_mm %}{{ component.length_mm }}{% else %}-{% endif %}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Weight (kg): <span class="font-normal">{{ component.weight_kg }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Condition: <span class="font-normal">{{ component.get_condition_display }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Site: <span class="font-normal">{{ component.get_site_display }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Location: <span class="font-normal">{% if component.location %}{{ component.location }}{% else %}-{% endif %}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Last Inspection: <span class="font-normal">{{ component.last_inspection|date:"Y-m-d" }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">Next Inspection: <span class="font-normal">{{ component.next_inspection|date:"Y-m-d" }}</span></p>
+        </div>
+        <div class="mb-4">
+            <p class="text-gray-700 text-sm font-bold mb-2">In Use: <span class="font-normal">{% if component.is_in_use %}Yes{% else %}No{% endif %}</span></p>
+        </div>
+        <div class="flex items-center justify-start">
+            <a href="{% url 'scaffold_component_edit' component.pk %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">Edit</a>
+            <a href="{% url 'scaffold_component_delete' component.pk %}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">Delete</a>
+            <a href="{% url 'scaffold_component_list' %}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">Back to List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

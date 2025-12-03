@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6">Scaffold Component List</h1>
+
+    <div class="mb-4">
+        <a href="{% url 'scaffold_component_create' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Create Asset</a>
+    </div>
+
+    <form method="GET" class="mb-6 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="mb-4">
+                <label for="q" class="block text-gray-700 text-sm font-bold mb-2">Search (Name/Asset Code):</label>
+                <input type="text" name="q" id="q" value="{{ q }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="mb-4">
+                <label for="site" class="block text-gray-700 text-sm font-bold mb-2">Site:</label>
+                <select name="site" id="site" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">All</option>
+                    {% for site_value, site_label in site_choices %}
+                        <option value="{{ site_value }}" {% if site_value == site_filter %}selected{% endif %}>{{ site_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="category" class="block text-gray-700 text-sm font-bold mb-2">Category:</label>
+                <select name="category" id="category" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">All</option>
+                    {% for cat_value, cat_label in category_choices %}
+                        <option value="{{ cat_value }}" {% if cat_value == category_filter %}selected{% endif %}>{{ cat_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="condition" class="block text-gray-700 text-sm font-bold mb-2">Condition:</label>
+                <select name="condition" id="condition" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">All</option>
+                    {% for cond_value, cond_label in condition_choices %}
+                        <option value="{{ cond_value }}" {% if cond_value == condition_filter %}selected{% endif %}>{{ cond_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="in_use" class="block text-gray-700 text-sm font-bold mb-2">In Use:</label>
+                <select name="in_use" id="in_use" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">All</option>
+                    <option value="true" {% if in_use_filter == 'true' %}selected{% endif %}>Yes</option>
+                    <option value="false" {% if in_use_filter == 'false' %}selected{% endif %}>No</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Apply Filters</button>
+        <a href="{% url 'scaffold_component_list' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">Clear Filters</a>
+    </form>
+
+    <div class="mb-6">
+        <h2 class="text-xl font-semibold mb-2">Summary:</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white shadow-md rounded px-4 py-3">
+                <h3 class="font-bold">By Site:</h3>
+                <ul>
+                    {% for sc in site_counts %}
+                        <li>{{ sc.site }}: {{ sc.count }}</li>
+                    {% empty %}
+                        <li>No data</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="bg-white shadow-md rounded px-4 py-3">
+                <h3 class="font-bold">By Condition:</h3>
+                <ul>
+                    {% for cc in condition_counts %}
+                        <li>{{ cc.condition }}: {{ cc.count }}</li>
+                    {% empty %}
+                        <li>No data</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto bg-white shadow-md rounded my-6">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Asset Code</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Category</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Length (mm)</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Weight (kg)</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Condition</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Site</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Next Inspection</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">In Use</th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for component in page_obj %}
+                <tr>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ component.asset_code }}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ component.name }}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ component.category }}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{% if component.length_mm %}{{ component.length_mm }}{% else %}-{% endif %}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ component.weight_kg }}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ component.condition }}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ component.site }}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ component.next_inspection|date:"Y-m-d" }}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{% if component.is_in_use %}Yes{% else %}No{% endif %}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <a href="{% url 'scaffold_component_detail' component.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-2">View</a>
+                        <a href="{% url 'scaffold_component_edit' component.pk %}" class="text-green-600 hover:text-green-900 mr-2">Edit</a>
+                        <a href="{% url 'scaffold_component_delete' component.pk %}" class="text-red-600 hover:text-red-900">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">No scaffold components found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# Pagination controls #}
+    <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+        <div class="flex flex-1 justify-between sm:hidden">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if site_filter %}&site={{ site_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}{% if in_use_filter %}&in_use={{ in_use_filter }}{% endif %}" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if site_filter %}&site={{ site_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}{% if in_use_filter %}&in_use={{ in_use_filter }}{% endif %}" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+          {% endif %}
+        </div>
+        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-gray-700">
+              Showing
+              <span class="font-medium">{{ page_obj.start_index }}</span>
+              to
+              <span class="font-medium">{{ page_obj.end_index }}</span>
+              of
+              <span class="font-medium">{{ page_obj.paginator.count }}</span>
+              results
+            </p>
+          </div>
+          <div>
+            <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+              {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if site_filter %}&site={{ site_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}{% if in_use_filter %}&in_use={{ in_use_filter }}{% endif %}" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                  <span class="sr-only">Previous</span>
+                  <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+              {% endif %}
+      
+              {% for i in page_obj.paginator.page_range %}
+                <a href="?page={{ i }}{% if q %}&q={{ q }}{% endif %}{% if site_filter %}&site={{ site_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}{% if in_use_filter %}&in_use={{ in_use_filter }}{% endif %}" class="relative inline-flex items-center {% if page_obj.number == i %}bg-indigo-600 text-white{% else %}px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0{% endif %}">
+                  {{ i }}
+                </a>
+              {% endfor %}
+      
+              {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if site_filter %}&site={{ site_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}{% if in_use_filter %}&in_use={{ in_use_filter }}{% endif %}" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                  <span class="sr-only">Next</span>
+                  <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+              {% endif %}
+            </nav>
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
